@@ -20,32 +20,29 @@ import com.google.gson.JsonObject;
 /**
  * Handler for requests to Lambda function.
  */
-public class PostHandler implements RequestHandler<APIGatewayProxyRequestEvent, APIGatewayProxyResponseEvent> {
+public class PostHandler implements RequestHandler<Map<String, String>, Map<String, String>> {
 
-    public APIGatewayProxyResponseEvent handleRequest(final APIGatewayProxyRequestEvent input, final Context context) {
-    	LambdaLogger logger = context.getLogger();
-    	logger.log("Handling  Post request for /users ");
-        String request= input.getBody();
-        Gson gson= new Gson();
-        Map<String, String> userDetails= gson.fromJson(request, Map.class);
-        userDetails.put("userId", UUID.randomUUID().toString());
-        
-//        todo:  process user detsils
-        Map returnValue = new HashMap();
-        returnValue.put("firstName", userDetails.get("firstName"));
-        returnValue.put("lastName", userDetails.get("lastName"));
-        returnValue.put("userId", userDetails.get("userId"));
-        
-        APIGatewayProxyResponseEvent response= new APIGatewayProxyResponseEvent();
-        response.withStatusCode(200);
-        response.withBody(gson.toJson(returnValue, Map.class));
-        
-        Map responseHeaders = new HashMap();
-        responseHeaders.put("Content-Type", "application/json");
-        response.withHeaders(responseHeaders);
-            return response;
-    }
+	public Map<String, String> handleRequest(final Map<String, String> input, final Context context) {
 
+		String firstName = input.get("firstName");
+		String lastName = input.get("lastName");
+		String email = input.get("email");
+		String password = input.get("password");
+		String repeatPassword = input.get("repeatPassword");
+		
+		LambdaLogger logger = context.getLogger();
+		logger.log("\n firstName : "+ firstName);
+		logger.log("\n lastName : "+ lastName);
+//		logger.log("\n email : "+ email);
+		
+		Map<String, String> response = new HashMap();
+		
+		response.put("id", UUID.randomUUID().toString());
+		response.put("firstName", firstName);
+		response.put("lastName", lastName);
+		response.put("email", email);
 
-    
+		return response;
+	}
+
 }
